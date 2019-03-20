@@ -1,8 +1,10 @@
 package carManager;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,53 +24,71 @@ public class Main {
 		Scanner sc = new Scanner(System.in);
 		do {
 			System.out.println("Menu: ");
-			System.out.println("1: Insert");
-			System.out.println("2: View");
-			System.out.println("3: xe tung loai ");
-			System.out.println("4: insert Insurance package");
-			System.out.println("5: show IP ");
-			System.out.println("6: Exit");
+			System.out.println("1: Them Moi Xe Oto");
+			System.out.println("2: Them Moi Cac Goi Bao Hiem");
+			System.out.println("3: Mua Goi Bao Hiem Cho Oto");
+			System.out.println("4: Xem thong tin oto tam thoi");
+			System.out.println("5: Xem thong tin goi bao hiem tam thoi");
+			System.out.println("6: Xem thong tin chi tiet da dc luu trong file");
+			System.out.println("Thoat!");
 			chon = Integer.parseInt(sc.nextLine());
 			switch (chon) {
 			case 1:
 
-				main1.add();
-				main1.pL();
-				main1.writeFile();
+				main1.add(); // Them moi xe oto
+				main1.pL(); // Phan loai xe
+
 
 				break;
 			case 2:
-				main1.show();
+				main1.insertPackage(); // Them moi cac goi bao hiem
+
 				break;
 			case 3:
-				main1.viewCar();
+				main1.assignAssurance(); // Mua goi bao hiem cho cac xe
+				main1.writeFile(); // Ghi lai thong tin cac loai xe
+				main1.writeFileIP(); // Ghi lai thong tin cac goi bao hiem
+
 				break;
 			case 4:
-				main1.insertPackage();
+				main1.show(); // xem tat ca cac xe trong tien trinh
+				main1.viewCar(); // xem tat ca cac xe theo tung hang
 				break;
 			case 5:
-				main1.showIPackage();
+				main1.showIPackage(); // xem tat ca cac goi bao hiem trong tien trinh
 				break;
 			case 6:
+				main1.readFileCar(); // doc file thong tin chi tiet tung xe tu file
+				break;
+			case 7:
 				System.exit(0);
 			}
-		} while (chon != 7);
+		} while (chon != 8);
 	}
 
 	public void add() {
 
-		System.out.println("Numb Car ? ");
+		System.out.println("Nhap so xe: ");
 		Scanner sc = new Scanner(System.in);
 		int numCar = Integer.parseInt(sc.nextLine());
+		if (listCar.isEmpty()) {
 		for (int i = 0; i < numCar; i++) {
 			Car car = new Car();
 			car.insertData();
-			car.setCarName("Car #" + numCar + (i + 1));
+			car.setCarName("Car #" + (i + 1));
 			listCar.add(car);
 
 
 		}
-
+		} else {
+			int a = listCar.size();
+			for (int i = 0; i < numCar; i++) {
+				Car car = new Car();
+				car.insertData();
+				car.setCarName("Car #" + (a + i + 1));
+				listCar.add(car);
+			}
+		}
 
 	}
 
@@ -104,15 +124,15 @@ public class Main {
 	}
 
 	public void writeFile() {
-		List<Car> listPrint = new ArrayList<>();
+		List<Car> listWriteCar = new ArrayList<>();
 		try {
-			FileOutputStream fos = new FileOutputStream("car.txt");
+			FileOutputStream fos = new FileOutputStream("Car.txt");
 			ObjectOutputStream oos = new ObjectOutputStream(fos);
 
 			for (Car car : listCar) {
-				listPrint.add(car);
+				listWriteCar.add(car);
 			}
-			oos.writeObject(listPrint);
+			oos.writeObject(listWriteCar);
 			oos.flush();
 			oos.close();
 			fos.close();
@@ -156,18 +176,21 @@ public class Main {
 		if (listPackage.isEmpty()) {
 			for (int i = 0; i < numb; i++) {
 				InsurancePackage ip = new InsurancePackage();
-				ip.setIpName("Insurance Package#" + numb + (i + 1));
+				ip.setIpName("Insurance Package#" + (i + 1));
 				int index = rd.nextInt(iPackage.length);
 				ip.setPackageType(iPackage[index]);
 				listPackage.add(ip);
+				ip.setStatus(true);
 			}
 
 		} else {
+			int a = listPackage.size();
 			for (int i = 0; i < numb; i++) {
 				InsurancePackage ip = new InsurancePackage();
-				ip.setIpName("Insurance Package#" + (listPackage.size() + numb) + (i + 1));
+				ip.setIpName("Insurance Package#" + (a + i + 1));
 				int index = rd.nextInt(iPackage.length);
 				ip.setPackageType(iPackage[index]);
+				ip.setStatus(true);
 				listPackage.add(ip);
 			}
 		}
@@ -177,6 +200,123 @@ public class Main {
 	public void showIPackage() {
 		for (InsurancePackage ins : listPackage) {
 			ins.viewPackage();
+		}
+	}
+
+	public void writeFileIP() {
+		List<InsurancePackage> listWriteIP = new ArrayList<>();
+		try {
+			FileOutputStream fos = new FileOutputStream("InsurancePackage.txt");
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+
+			for (InsurancePackage iP : listWriteIP) {
+				listWriteIP.add(iP);
+			}
+			oos.writeObject(listWriteIP);
+			oos.flush();
+			oos.close();
+			fos.close();
+		} catch (FileNotFoundException ex) {
+			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (IOException ex) {
+			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
+
+	public void assignAssurance() {
+
+		Scanner sc = new Scanner(System.in);
+		System.out.print("Insert Name Car: ");
+		String nCar = sc.nextLine();
+		for (Car car : listCar) {
+			if (nCar.equals(car.getCarName()) && car.isHaveInsurance() == false) {
+
+				car.viewData();
+				System.out.println("cac goi bao hiem ho tro");
+				if (car.getCarType().equals("modernCar")) {
+					for (InsurancePackage ins : listPackage) {
+						if (ins.getPackageType().equals("A") && ins.isStatus() == true) {
+							ins.viewPackage();
+						}
+
+					}
+					System.out.println("Nhap ten goi bao hiem can mua:");
+					String nIP = sc.nextLine();
+					car.setInsuranceName(nIP);
+					car.setHaveInsurance(true);
+					System.out.println("Successful Buying!");
+					for (InsurancePackage ins : listPackage) {
+						if (nIP.equals(ins.getIpName())) {
+							ins.setStatus(false);
+						}
+					}
+				}
+
+				if (car.getCarType().equals("mediumCar")) {
+					for (InsurancePackage ins : listPackage) {
+						if (ins.getPackageType().equals("B") && ins.isStatus() == true) {
+							ins.viewPackage();
+						}
+					}
+					System.out.println("Nhap ten goi bao hiem can mua:");
+					String nIP = sc.nextLine();
+					car.setInsuranceName(nIP);
+					car.setHaveInsurance(true);
+					System.out.println("Successful Buying!");
+					for (InsurancePackage ins : listPackage) {
+						if (nIP.equals(ins.getIpName())) {
+							ins.setStatus(false);
+						}
+					}
+				}
+
+				if (car.getCarType().equals("oldCar")) {
+					for (InsurancePackage ins : listPackage) {
+						if (ins.getPackageType().equals("C") && ins.isStatus() == true) {
+							ins.viewPackage();
+						}
+					}
+					System.out.println("Nhap ten goi bao hiem can mua:");
+					String nIP = sc.nextLine();
+					car.setInsuranceName(nIP);
+					car.setHaveInsurance(true);
+					System.out.println("Successful Buying!");
+					for (InsurancePackage ins : listPackage) {
+						if (nIP.equals(ins.getIpName())) {
+							ins.setStatus(false);
+						}
+					}
+				}
+
+
+
+			}else if(nCar.equals(car.getCarName()) && car.isHaveInsurance() == true) {
+
+				System.out.println("Unavailable Buying!");
+			}
+		}
+
+
+
+	}
+
+	public void readFileCar() {
+		List<Car> listReadCar = new ArrayList<>();
+		try {
+			FileInputStream fis = new FileInputStream("Car.txt");
+			ObjectInputStream ois = new ObjectInputStream(fis);
+			listReadCar = (List<Car>) ois.readObject();
+			ois.close();
+			fis.close();
+			for (Car car : listReadCar) {
+				car.displayData();
+			}
+		} catch (FileNotFoundException ex) {
+			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (IOException ex) {
+			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (ClassNotFoundException ex) {
+			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
 }

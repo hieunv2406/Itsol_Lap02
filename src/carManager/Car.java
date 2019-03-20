@@ -11,14 +11,14 @@ public class Car implements Serializable {
 	private String brand;
 	private boolean haveInsurance;
 	private String carType;
-	private int totalCar;
+	private String insuranceName;
 
 	public Car() {
 		super();
 	}
 
 	public Car(String carName, String numberPlate, int yearOfManufacture, String brand,
-			boolean haveInsurance, String carType, int totalCar) {
+			boolean haveInsurance, String carType, String insuranceName) {
 		super();
 		this.carName = carName;
 		this.numberPlate = numberPlate;
@@ -26,7 +26,7 @@ public class Car implements Serializable {
 		this.brand = brand;
 		this.haveInsurance = haveInsurance;
 		this.carType = carType;
-		this.totalCar = totalCar;
+		this.insuranceName = insuranceName;
 	}
 
 	public String getCarName() {
@@ -79,12 +79,12 @@ public class Car implements Serializable {
 		this.carType = carType;
 	}
 
-	public int getTotalCar() {
-		return totalCar;
+	public String getInsuranceName() {
+		return insuranceName;
 	}
 
-	public void setTotalCar(int totalCar) {
-		this.totalCar = totalCar;
+	public void setInsuranceName(String insuranceName) {
+		this.insuranceName = insuranceName;
 	}
 
 	public void insertData() {
@@ -130,5 +130,10 @@ public class Car implements Serializable {
 
 	}
 
-
+	public void displayData() {
+		System.out.println("nameCar: " + this.carName + "\t" + "numberPlate: " + this.numberPlate + "\t"
+				+ "yearOfManufacture: " + this.yearOfManufacture + "\t" + "brand:	" + this.brand + "\t"
+				+ "haveInsurance: " + this.haveInsurance + "\t" + "insuranceName: " + this.insuranceName + "\t"
+				+ "carType: " + this.carType);
+	}
 }

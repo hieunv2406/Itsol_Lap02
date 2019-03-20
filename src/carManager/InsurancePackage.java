@@ -42,6 +42,7 @@ public class InsurancePackage {
 	}
 
 	public void viewPackage() {
-		System.out.println("InsurancePackage Name: " + this.IpName + "\t" + "Package Type: " + this.packageType);
+		System.out.println("InsurancePackage Name: " + this.IpName + "\t" + "Package Type: " + this.packageType + "\t"
+				+ "status: " + this.status);
 	}
 }
